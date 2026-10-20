@@ -36,3 +36,21 @@ function renderResultSummary() {
   summary.textContent = records.length + " records available"; host.querySelector("h2")?.after(summary);
 }
 renderResultSummary();
+
+
+// Catalogue expansion: sort and windowed result browsing.
+(() => {
+  const baseRender = render; let sortMode = "name"; let page = 0;
+  const enhance = () => {
+    if (document.querySelector("#catalog-tools")) return;
+    const panel = document.createElement("section"); panel.id = "catalog-tools"; panel.className = "item";
+    panel.innerHTML = '<strong>Catalogue tools</strong><div class="row"><select id="sort-mode"><option value="name">Sort by name</option><option value="status">Sort by status</option></select><button id="next-page" type="button">Next page</button></div><p id="catalog-window" class="muted small"></p>';
+    document.querySelector("#app")?.append(panel);
+    const update = () => { const rows = [...records].sort((a, b) => sortMode === "name" ? a[0].localeCompare(b[0]) : a[2].localeCompare(b[2])); const visible = rows.slice(page * 2, page * 2 + 2); panel.querySelector("#catalog-window").textContent = visible.map((row) => row[0]).join(" · ") || "No more records"; };
+    panel.querySelector("#sort-mode").onchange = (event) => { sortMode = event.target.value; page = 0; update(); };
+    panel.querySelector("#next-page").onclick = () => { page++; update(); };
+    update();
+  };
+  render = () => { baseRender(); enhance(); };
+  enhance();
+})();
