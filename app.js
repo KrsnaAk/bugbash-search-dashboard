@@ -26,3 +26,13 @@ function render() {
   };
 }
 render();
+
+
+// Added organizer feature: live result summary.
+function renderResultSummary() {
+  const host = document.querySelector("#app");
+  if (!host || document.querySelector("#result-summary")) return;
+  const summary = document.createElement("p"); summary.id = "result-summary"; summary.className = "muted small";
+  summary.textContent = records.length + " records available"; host.querySelector("h2")?.after(summary);
+}
+renderResultSummary();
